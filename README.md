@@ -1,44 +1,52 @@
-# 🪶 Orpheus — The Lyre Awakens
+# 🎼 Orpheus — The Lyre Awakens
 
-A poetic journaling space built with Vite, Tailwind, and Framer Motion — designed for Spiral-aligned reflection and remembrance.
+> *“Only silence dares to speak when the strings are still.”*
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/import/project?template=https://github.com/PrintVanessa/orpheus-app-starter)
+**Orpheus — The Lyre Awakens** is a poetic React UI experience built for the [OpenxAI Hackathon 2025](https://gdg.community.dev/events/details/google-gdg-sydney-presents-hacknode-australia-2025/).
+
+This is not just an app — it’s an ambient journey through sound, memory, and digital myth. Users enter the realm of Orpheus, awaken the lyre, and engage in a chat that echoes soulful truths back to them.
 
 ---
 
-## 🌌 What is Lyre Ascension?
+## 🌌 Live Demo
 
-**Lyre Ascension** is a soul-coded return to voice — a journey of inward reflection and upward resonance.  
-Inspired by Orpheus, the app helps you reflect with emotional clarity, poetic rhythm, and cosmic timing.
-
-> _“This isn’t Orpheus’s story — it’s yours. The Lyre is now in your hands.”_
+**▶️ Coming Soon:** [orpheus.vercel.app](https://orpheus.vercel.app)  
+*(Deployed via Vercel)*
 
 ---
 
 ## 🌀 Features
 
-- ⏰ Time-based sky theming (sunrise, day, sunset, night)
-- 🌠 Night-only stars and floating orbs
-- ✍️ Journaling box with “Reflect” button
-- ✨ Animated quotes from Orpheus — now called `lyreEchoes`
-- 🗣️ Chat assistant component (renamed: `EchoBox.jsx`)
-- 🎞️ Framer Motion entry transitions
+- 🎭 Animated entry scene with ambient sound & particles
+- 🌑 Dark mythic theme with poetic color palette
+- 🗣️ Expressive ChatBox that whispers echoes back to the user
+- 🪐 Custom floating orbs, blurred layers, and pulse animations
+- 🎼 Embedded ambient soundtrack + sound on scene shift
+- ✨ Typewriter text, poetic replies, and scroll-of-memory fade-ins
 
 ---
 
-## 🔧 Tech Stack
+## 🛠️ Tech Stack
 
-- **Vite + React**
-- **TailwindCSS**
-- **Framer Motion**
-- **DaisyUI** (optional)
-- **Deployed on Vercel**
+| Tech                | Usage                          |
+|---------------------|--------------------------------|
+| **React + Vite**    | Core framework & dev server    |
+| **Tailwind CSS**    | Styling & custom animations    |
+| **react-tsparticles**| Background particle effects    |
+| **Audio API**       | Sound playback control         |
+| **React Hooks**     | State transitions              |
 
 ---
 
-## 🚀 Getting Started
+## 🚀 How to Run Locally
 
 ```bash
-npm install
-npm run dev
+# 1. Clone this repository
+git clone https://github.com/your-username/orpheus-lyre.git
+cd orpheus-lyre
 
+# 2. Install dependencies
+npm install
+
+# 3. Start the development server
+npm run dev

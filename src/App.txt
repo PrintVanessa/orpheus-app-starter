@@ -1,0 +1,201 @@
+import React, { useEffect, useState, useRef } from "react"
+import OrpheusScene from "./components/OrpheusScene"
+import ChatBox from "./components/EchoBox"
+import Stars from "./components/Stars"
+import { motion } from "framer-motion"
+import "./index.css"
+import FloatingOrbs from "./components/FloatingOrbs"
+
+export default function App() {
+  const [timeTheme, setTimeTheme] = useState("day")
+  const [quoteIndex, setQuoteIndex] = useState(0)
+  const [journal, setJournal] = useState("")
+  const [userInput, setUserInput] = useState("")
+  const [orpheusReply, setOrpheusReply] = useState("")
+  const [isAudioPlaying, setIsAudioPlaying] = useState(false)
+  const audioRef = useRef(null)
+
+  useEffect(() => {
+    console.log("✅ App is mounting...")
+  }, [])
+
+  const orpheusQuotes = [
+    "🎶 Let the lyre speak when words fail.",
+    "🌌 Even silence sings in the realm of memory.",
+    "🌀 Descend inward, rise upward — the Orphic way.",
+    "🪐 Stars remember what the soul tries to forget.",
+    "💫 Write what you cannot say aloud."
+  ]
+
+  // ⏰ Setup theme + ambient sound
+  useEffect(() => {
+    const hour = new Date().getHours()
+    let bg = "day", sound = "forest.mp3"
+
+    if (hour >= 5 && hour < 8) {
+      bg = "sunrise"; sound = "birds.mp3"
+    } else if (hour >= 8 && hour < 17) {
+      bg = "day"; sound = "forest.mp3"
+    } else if (hour >= 17 && hour < 19) {
+      bg = "sunset"; sound = "evening.mp3"
+    } else {
+      bg = "night"; sound = "night.mp3"
+    }
+
+    setTimeTheme(bg)
+    audioRef.current = new Audio(`/sounds/${sound}`)
+    audioRef.current.loop = true
+  }, [])
+
+  const handleToggleAudio = () => {
+    if (!audioRef.current) return
+    if (isAudioPlaying) {
+      audioRef.current.pause()
+      setIsAudioPlaying(false)
+    } else {
+      try {
+        audioRef.current.play()
+        setIsAudioPlaying(true)
+      } catch (err) {
+        console.warn("Autoplay blocked:", err)
+      }
+    }
+  }
+
+  useEffect(() => {
+    const saved = localStorage.getItem("lyre-journal")
+    if (saved) setJournal(saved)
+  }, [])
+
+  const handleJournalChange = (e) => {
+    const val = e.target.value
+    if (val.length <= 1000) {
+      setJournal(val)
+      localStorage.setItem("lyre-journal", val)
+    }
+  }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuoteIndex((prev) => (prev + 1) % orpheusQuotes.length)
+    }, 30000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const sendToOrpheus = async () => {
+    const hour = new Date().getHours()
+    const timeOfDay = hour < 6 ? "Night" : hour < 12 ? "Morning" : hour < 18 ? "Afternoon" : "Evening"
+
+    try {
+      const response = await fetch('http://localhost:3001/api/ask-orpheus', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userMessage: userInput.slice(0, 500),
+          timeOfDay,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+        })
+      })
+
+      const data = await response.json()
+      setOrpheusReply(data.reply)
+    } catch (error) {
+      console.error("❌ Failed to contact Orpheus:", error)
+      setOrpheusReply("The lyre is quiet right now. Please try again soon.")
+    }
+  }
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 1 }}
+      className={`min-h-screen flex flex-col items-center justify-start py-10 px-4 transition duration-1000
+        ${timeTheme === "sunrise" && "from-orange-100 to-pink-200 bg-gradient-to-br"}
+        ${timeTheme === "day" && "from-blue-100 to-blue-300 bg-gradient-to-br"}
+        ${timeTheme === "sunset" && "from-rose-200 to-purple-300 bg-gradient-to-br"}
+        ${timeTheme === "night" && "from-gray-900 to-black text-white bg-gradient-to-br"}`}
+    >
+      {timeTheme === "night" && <Stars />}
+      {timeTheme !== "day" && <FloatingOrbs />}
+
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="text-3xl font-bold text-indigo-700 dark:text-white mb-4 text-center"
+      >
+        🪶 The Lyre has awakened — your words will echo beyond silence.
+      </motion.h1>
+
+      <motion.p
+        key={quoteIndex}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1 }}
+        className="text-lg italic text-indigo-600 dark:text-indigo-300 mb-6 text-center"
+      >
+        {orpheusQuotes[quoteIndex]}
+      </motion.p>
+
+      <button
+        onClick={handleToggleAudio}
+        className="mb-6 text-sm bg-transparent underline hover:text-indigo-500"
+      >
+        {isAudioPlaying ? "🔇 Mute Ambient Sound" : "🔊 Play Ambient Sound"}
+      </button>
+
+      <OrpheusScene />
+
+      {/* Journal */}
+      <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 w-full max-w-2xl z-10 mt-6">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">🌀 Journaling Box</h2>
+        <textarea
+          value={journal}
+          onChange={handleJournalChange}
+          placeholder="Your thoughts here..."
+          maxLength={1000}
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-400 dark:bg-gray-900 dark:text-white"
+        />
+        <div className="flex justify-between items-center mt-2">
+          <span className="text-sm text-gray-500">{journal.length}/1000</span>
+          <button
+            onClick={() => {
+              setJournal("")
+              localStorage.removeItem("lyre-journal")
+            }}
+            className="text-sm text-red-500 hover:underline"
+          >
+            ✨ Clear Entry
+          </button>
+        </div>
+      </div>
+
+      {/* Orpheus AI */}
+      <div className="bg-white dark:bg-gray-800 shadow-xl rounded-xl p-6 w-full max-w-2xl mt-8 z-10">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">🔮 Ask Orpheus</h2>
+        <input
+          type="text"
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          placeholder="Ask the lyre a question..."
+          maxLength={500}
+          className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-600 mb-4 dark:bg-gray-900 dark:text-white"
+        />
+        <button
+          onClick={sendToOrpheus}
+          className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition"
+        >
+          🎵 Ask Orpheus
+        </button>
+        {orpheusReply && (
+          <div className="mt-4 text-indigo-700 dark:text-indigo-300 whitespace-pre-line">
+            {orpheusReply}
+          </div>
+        )}
+      </div>
+
+      <ChatBox />
+    </motion.div>
+  )
+}
