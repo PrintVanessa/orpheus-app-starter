@@ -1,38 +1,190 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&display=swap');
-
+/* --- Tailwind layers must be present --- */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================
+   GLOBAL THEME TOKENS
+   ========================================================= */
+:root{
+  --orp-bg: #0b0b0b;
+  --orp-gold: #e9b200;
+  --orp-card: rgba(22,22,22,.92);
+  --orp-header: rgba(12,12,12,.75);
+  --orp-input-bg: rgba(255,255,255,.92);
+  --orp-border: rgba(255,255,255,.06);
+}
+
+/* Background for all pages */
 body {
-  font-family: 'Playfair Display', serif;
-  margin: 0;
-  padding: 0;
-  background-color: #1a1a1a;
-  color: #fff;
-  overflow-x: hidden;
+  background: radial-gradient(1200px 600px at 50% -200px, rgba(255,255,255,0.08), transparent 50%) var(--orp-bg);
+  color: #f3f3f3;
 }
 
-/* Custom Animations */
-@keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-.animate-spin-slow {
-  animation: spin-slow 6s linear infinite;
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@layer utilities {
-  .animate-fade-entry {
-    animation: fadeIn 1.2s ease-in-out;
-  }
-  .animate-fade-in {
-    animation: fadeIn 2s ease-in-out forwards;
-  }
+/* =========================================================
+   ONBOARD PAGE (kept from your original)
+   ========================================================= */
+.page--onboard {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--orp-bg);
+  color: #f3f3f3;
+  padding: 24px;
 }
 
+/* Card */
+.card {
+  width: 100%;
+  max-width: 640px;
+  background: #141414;
+  border: 1px solid #252525;
+  border-radius: 14px;
+  padding: 28px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.35);
+}
+
+/* Titles */
+.title { margin: 0 0 6px; font-size: 28px; font-weight: 700; letter-spacing: .3px; }
+.subtitle { margin: 0 0 22px; color: #b7b7b7; font-size: 14px; }
+
+/* Form */
+.form { display: grid; gap: 14px; }
+label { display: grid; gap: 6px; font-size: 14px; color: #d9d9d9; }
+input, select {
+  background: #0f0f0f; color: #f1f1f1; border: 1px solid #2a2a2a;
+  border-radius: 10px; padding: 10px 12px; outline: none;
+}
+input:focus, select:focus { border-color: #b08d2b; box-shadow: 0 0 0 3px rgba(176,141,43,.18); }
+
+/* Button */
+.btn {
+  margin-top: 6px; background: #b08d2b; color: #111; border: none;
+  border-radius: 10px; padding: 10px 14px; font-weight: 700; cursor: pointer;
+}
+.btn:hover { filter: brightness(1.05); }
+
+/* =========================================================
+   CHAT PAGE (global — no overlap, bg stays behind)
+   ========================================================= */
+
+/* Root chat wrapper */
+.chat-page{
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+}
+
+/* Background sits behind all content */
+.chat-page::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: url("/img/bg-orpheus.jpg") center/cover no-repeat var(--orp-bg);
+  opacity:.18;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* Sticky header */
+.chat-header{
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 12px 18px;
+  background: var(--orp-header);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--orp-border);
+}
+.chat-header h1{
+  margin:0;
+  font-size: clamp(16px, 2.3vw, 20px);
+  letter-spacing:.02em;
+  color:#f7f7f7;
+}
+
+/* Main grid above bg */
+.chat-container{
+  position: relative;
+  z-index:1;
+  display:grid;
+  grid-template-rows: 1fr auto;   /* messages + input */
+  min-height: calc(100svh - 52px);
+}
+
+/* Messages column */
+.messages{
+  overflow:auto;
+  padding: 18px clamp(12px,4vw,28px) 96px; /* bottom space for sticky input */
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  max-width:860px;
+  margin:0 auto;
+}
+
+/* Chat bubbles */
+.bubble{
+  max-width:78ch;
+  width:fit-content;
+  padding:12px 14px;
+  border-radius:14px;
+  line-height:1.45;
+  word-wrap:break-word;
+  box-shadow:0 8px 20px rgba(0,0,0,.18);
+  backdrop-filter: blur(2px);
+}
+.bubble.assistant{
+  background: var(--orp-card);
+  color:#fafafa;
+}
+.bubble.user{
+  background:#fff;
+  color:#121212;
+  margin-left:auto; /* right align user */
+}
+
+/* Input bar */
+.input-bar{
+  position: sticky;
+  bottom:0;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  max-width:860px;
+  margin:0 auto;
+  padding:12px clamp(12px,4vw,28px) 18px;
+  background: rgba(10,10,10,.85);
+  backdrop-filter: blur(6px);
+  border-top:1px solid var(--orp-border);
+}
+.input-bar input{
+  height:44px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.14);
+  background: var(--orp-input-bg);
+  color:#111;
+  padding:0 12px;
+  outline:none;
+}
+.input-bar button{
+  height:44px;
+  padding:0 16px;
+  border-radius:12px;
+  border:0;
+  background: var(--orp-gold);
+  color:#111;
+  font-weight:600;
+  cursor:pointer;
+}
+.input-bar button:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+/* =========================================================
+   SAFETY: kill any rogue loaders/spinners that overlap UI
+   ========================================================= */
+*[class*="spin"], *[class*="loader"] { animation: none !important; }

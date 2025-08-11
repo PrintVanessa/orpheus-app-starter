@@ -5,10 +5,10 @@ module.exports = {
     extend: {
       colors: {
         lyreGold: "#f5d76e",
-        underworldGray: "#1a1a1a",
-        echoPink: "#eaa7c6"
-      }
-    }
+        underworldGray: "#191C1B",
+        echoPink: "#eaa7c6",
+      },
+    },
   },
   plugins: [],
 };

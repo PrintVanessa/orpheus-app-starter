@@ -1,67 +1,26 @@
 // src/components/OrpheusScene.jsx
-import React, { useEffect, useState } from 'react';
-import { useLyreEcho } from '../hooks/useLyreEcho';
-import SpiralNav from './SpiralNav.jsx';
+import React from 'react';
 
 export default function OrpheusScene() {
-  const presence = useLyreEcho();
-  const [sky, setSky] = useState('');
-
-  useEffect(() => {
-    // Play audio on presence
-    if (presence === 'expanding') {
-      const audio = new Audio('/lyre-awakened.mp3');
-      audio.volume = 0.6;
-      audio.play().catch((err) => {
-        console.warn('Audio playback blocked:', err);
-      });
-    }
-
-    // Choose sky background
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 11) {
-      setSky('/orpheus background (morning).jpeg');
-    } else if (hour >= 11 && hour < 17) {
-      setSky('/Orpheus background (midday).jpeg');
-    } else if (hour >= 17 && hour < 20) {
-      setSky('/orpheus background (evening).jpeg');
-    } else {
-      setSky('/orpheus app background (nighttime).jpeg');
-    }
-  }, [presence]);
+  const name = localStorage.getItem('orpheus_name');
+  const ageGroup = localStorage.getItem('orpheus_ageGroup');
+  const country = localStorage.getItem('orpheus_country');
+  const city = localStorage.getItem('orpheus_city');
+  const race = localStorage.getItem('orpheus_race');
 
   return (
-    <div
-      className="mb-10 text-center animate-fade-in bg-cover bg-center min-h-screen flex flex-col justify-center"
-      style={{ backgroundImage: `url(${sky})` }}
-    >
-      <img
-        src="/orpheus.png"
-        alt="Orpheus"
-        className="w-40 h-40 mx-auto mb-4 rounded-full shadow-lg animate-fade-entry"
-      />
+    <div className="min-h-screen bg-black text-white p-6">
+      <h1 className="text-2xl font-bold text-lyreGold mb-4">Greetings, {name}.</h1>
+      <p className="mb-2">You come from <strong>{city}</strong>, <strong>{country}</strong>.</p>
+      <p className="mb-2">Age group: {ageGroup}</p>
+      <p className="mb-2">Cultural identity: {race || "unspecified"}</p>
 
-      {presence === 'rooted' && (
-        <p className="text-gray-300 italic transition-opacity duration-1000 opacity-100">
-          The air is still... waiting.
-        </p>
-      )}
-
-      {presence === 'expanding' && (
-        <>
-          <p className="text-echoPink font-semibold text-xl animate-typewriter border-echoPink mb-4">
-            The Lyre has awakened — your words will echo beyond silence.
-          </p>
-          <button
-            onClick={() => window.location.href = "/gate"}
-            className="mt-4 px-6 py-2 bg-lyreGold text-underworldGray font-semibold rounded shadow hover:scale-105 transition"
-          >
-            Speak Your Truth →
-          </button>
-        </>
-      )}
-
-      <SpiralNav />
+      <div className="mt-6 p-4 bg-[#1a1a1a] border border-lyreGold rounded">
+        <p>🧙 “Your philosopher has spoken…”</p>
+        <p className="italic mt-2">“He who learns but does not think is lost.  
+        He who thinks but does not learn is in danger.” — Confucius</p>
+        <p className="mt-2">→ What in your life are you being asked to reflect on, {name}?</p>
+      </div>
     </div>
   );
 }
